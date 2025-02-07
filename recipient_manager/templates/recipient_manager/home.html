@@ -128,9 +128,9 @@
         <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
         <div class="container">
           <div class="carousel-caption text-start">
-            <h1>Слайд 1 .</h1>
-            <p class="opacity-75">Some representative placeholder content for the first slide of the carousel.</p>
-            <p><a class="btn btn-lg btn-primary" href="#">Sign up today</a></p>
+            <h1>Общее количество рассылок</h1>
+            <p class="opacity-75">{{ total_mailing }}</p>
+            <p><a class="btn btn-lg btn-primary" href="{% url 'mailing:mailing_list' %}">Открыть список всех рассылок</a></p>
           </div>
         </div>
       </div>
@@ -138,8 +138,8 @@
         <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
         <div class="container">
           <div class="carousel-caption">
-            <h1>Слайд 2.</h1>
-            <p>Some representative placeholder content for the second slide of the carousel.</p>
+            <h1>Количество активных рассылок</h1>
+            <p>{{ active_mailings }}</p>
             <p><a class="btn btn-lg btn-primary" href="#">Learn more</a></p>
           </div>
         </div>
@@ -148,8 +148,8 @@
         <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"/></svg>
         <div class="container">
           <div class="carousel-caption text-end">
-            <h1>Слайд 3</h1>
-            <p>Some representative placeholder content for the third slide of this carousel.</p>
+            <h1>Количество уникальных получателей</h1>
+            <p>{{ unique_recipients }}</p>
             <p><a class="btn btn-lg btn-primary" href="#">Browse gallery</a></p>
           </div>
         </div>

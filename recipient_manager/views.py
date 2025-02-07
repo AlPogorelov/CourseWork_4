@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
 
+from mailing.models import Mailing
 from .forms import MailingRecipientForm
 from .models import MailingRecipient
 from django.views.generic import DetailView, ListView, TemplateView, CreateView, DeleteView, UpdateView, View
@@ -44,3 +45,17 @@ class MailingRecipientUpdateView(UpdateView):
 
 class HomeView(TemplateView):
     template_name = 'recipient_manager/home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+
+        context['total_mailings'] = Mailing.objects.count()
+
+
+        context['active_mailings'] = Mailing.objects.filter(status='Running').count()
+
+
+        context['unique_recipients'] = MailingRecipient.objects.count()  # или оптимизированный запрос
+
+        return context

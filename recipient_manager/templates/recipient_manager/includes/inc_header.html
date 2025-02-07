@@ -18,9 +18,14 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'mailing:attempt_list' %}">'Statistics'</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-          </li>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'users:logout' %}" class="text-white">Выйти</a></li>
+            {% else %}
+            <li class="nav-item">
+              <a href="{% url 'users:login' %}" class="text-white">Войти</a></li>
+            <li class="nav-item">
+              <a href="{% url 'users:register' %}" class="text-white">Зарегистрироваться</a></li>
+            {% endif %}
         </ul>
         <form class="d-flex" role="search">
           <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">

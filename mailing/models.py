@@ -2,6 +2,7 @@ from django.db import models
 from recipient_manager.models import MailingRecipient
 from message_manager.models import Message
 
+
 class Mailing(models.Model):
 
     date_first_sending = models.DateField(verbose_name='Дата первой отправки', blank=True, null=True)
