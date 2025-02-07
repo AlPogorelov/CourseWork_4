@@ -140,7 +140,7 @@
           <div class="carousel-caption">
             <h1>Количество активных рассылок</h1>
             <p>{{ active_mailings }}</p>
-            <p><a class="btn btn-lg btn-primary" href="#">Learn more</a></p>
+
           </div>
         </div>
       </div>
@@ -150,7 +150,7 @@
           <div class="carousel-caption text-end">
             <h1>Количество уникальных получателей</h1>
             <p>{{ unique_recipients }}</p>
-            <p><a class="btn btn-lg btn-primary" href="#">Browse gallery</a></p>
+            <p><a class="btn btn-lg btn-primary" href="{% url 'recipient_manager:recipient_list' %}">Клиенты</a></p>
           </div>
         </div>
       </div>
