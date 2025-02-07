@@ -1,0 +1,17 @@
+{% extends 'recipient_manager/home.html'%}
+{% block content %}
+
+<hr class="featurette-divider">
+
+    <div class="row featurette">
+      <div class="col-md-7">
+        <h2 class="featurette-heading fw-normal lh-1">{{ attempt.id }} {{ attempt.mailing.message.subject }} </h2>
+        <p class="lead">{{attempt.attempt_date }}</p>
+        <p class="lead">{{attempt.status }}</p>
+        <p class="lead">{{attempt.status_response }}</p>
+        <p class="lead">{{attempt.mailing }}</p>
+
+      </div>
+    </div>
+
+{% endblock %}

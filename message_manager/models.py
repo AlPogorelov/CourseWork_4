@@ -1,3 +1,8 @@
 from django.db import models
 
-# Create your models here.
+
+class Message(models.Model):
+
+    subject = models.CharField(max_length=50, verbose_name='Тема сообщения')
+    body_text = models.TextField(blank=True, null=True)
+

@@ -1,0 +1,13 @@
+{% extends 'recipient_manager/home.html'%}
+{% block content %}
+<hr class="featurette-divider">
+
+    <div class="row featurette">
+      <div class="col-md-7">
+        <h2 class="featurette-heading fw-normal lh-1">{{ recipient.fio}} <span class="text-body-secondary">{{ recipient.email}}</span></h2>
+        <p class="lead">{{recipient.comment }}</p>
+        <a class="btn btn-primary" href="{% url 'recipient_manager:recipient_update' recipient.pk %}" role="button">Изменить</a>
+        <a class="btn btn-primary" href="{% url 'recipient_manager:recipient_delete' recipient.pk %}" role="button">Удалить</a>
+      </div>
+    </div>
+{% endblock %}
