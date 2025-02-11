@@ -15,9 +15,12 @@
           <li class="nav-item">
             <a class="nav-link" href="{% url 'mailing:mailing_list' %}">Mailing</a>
           </li>
+          {% if user.is_authenticated %}
           <li class="nav-item">
-            <a class="nav-link" href="{% url 'mailing:attempt_list' %}">'Statistics'</a>
+            <a class="nav-link" href="{% url 'mailing:user_statistics' %}">'Statistics'</a>
           </li>
+          {% else %}
+          {% endif %}
           {% if user.is_authenticated %}
           <li class="nav-item">
             <a class="nav-link" href="{% url 'users:logout' %}">Выйти</a>

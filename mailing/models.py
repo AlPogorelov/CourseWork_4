@@ -1,6 +1,7 @@
 from django.db import models
 from recipient_manager.models import MailingRecipient
 from message_manager.models import Message
+from users.models import User
 
 
 class Mailing(models.Model):
@@ -14,6 +15,7 @@ class Mailing(models.Model):
     ])
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='Сообщение')
     recipient = models.ManyToManyField(MailingRecipient)
+    mailing_owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец рассылки', blank=True, null=True)
 
     def __str__(self):
         return f'Рассылка {self.id}'
@@ -32,4 +34,3 @@ class AttemptMailing(models.Model):
     ])
     status_response = models.TextField(blank=True, null=True)
     mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE, verbose_name='Рассылка')
-

@@ -1,4 +1,4 @@
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, UserChangeForm
 from django import forms
 from django.contrib.auth import get_user_model
 
@@ -29,3 +29,4 @@ class PasswordResetForm(forms.Form):
         confirm_password = cleaned_data.get('confirm_password')
         if password and confirm_password and password != confirm_password:
             raise forms.ValidationError('Пароли не совпадают')
+

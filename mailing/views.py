@@ -1,15 +1,18 @@
 from django.utils import timezone
 
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, CreateView, DeleteView, UpdateView, View
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.core.exceptions import PermissionDenied
 from .forms import MailingForm
 from .models import Mailing, AttemptMailing
 from django.http import HttpResponse
 from django.core.management import call_command
+from django.db.models import Count, Q
 
 
-class MailingCreateView(CreateView):
+class MailingCreateView(LoginRequiredMixin, CreateView):
 
     model = Mailing
     form_class = MailingForm
@@ -18,36 +21,60 @@ class MailingCreateView(CreateView):
 
     def form_valid(self, form):
         form.instance.status = 'Create'
+        form.instance.mailing_owner = self.request.user
         return super().form_valid(form)
 
 
-class MailingListView(ListView):
+class MailingListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Mailing
     template_name = 'mailing/mailing_list.html'
     context_object_name = 'mailings'
+    permission_required = 'mailing.view_mailing'
+
+    def get_form_class(self):
+        user = self.request.user
+        if not user.has_perm('mailing.view_mailing') or not user == self.object.owner:
+            raise PermissionDenied
 
 
-class MailingDetailView(DetailView):
+class MailingDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = Mailing
     template_name = 'mailing/mailing_detail.html'
     context_object_name = 'mailing'
     pk_url_kwarg = 'pk'
+    permission_required = 'mailing.view_mailing'
 
+    def get_form_class(self):
+        user = self.request.user
+        if not user.has_perm('mailing.view_mailing') or not user == self.object.owner:
+            raise PermissionDenied
 
-class MailingUpdateView(UpdateView):
+class MailingUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Mailing
     form_class = MailingForm
     template_name = 'mailing/mailing_form.html'
     success_url = reverse_lazy('mailing:mailing_list')
+    permission_required = 'mailing.change_mailing'
+
+    def get_form_class(self):
+        user = self.request.user
+        if not user.has_perm('mailing.delete_mailing') or not user == self.object.owner:
+            raise PermissionDenied
 
 
-class MailingDeleteView(DeleteView):
+class MailingDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Mailing
     template_name = 'mailing/mailing_delete.html'
     success_url = reverse_lazy('mailing:mailing_list')
+    permission_required = 'mailing.delete_mailing'
+
+    def get_form_class(self):
+        user = self.request.user
+        if not user.has_perm('mailing.delete_mailing') or not user == self.object.owner:
+            raise PermissionDenied
 
 
-class MailingSendView(DetailView):
+class MailingSendView(LoginRequiredMixin, DetailView):
     model = Mailing
     pk_url_kwarg = 'pk'
     template_name = 'mailing/mailing_send.html'
@@ -80,15 +107,80 @@ class MailingSendView(DetailView):
             return HttpResponse('Ошибка при отправке рассылки', status=500)
 
 
-class AttemptMailingListView(ListView):
+class AttemptMailingView(LoginRequiredMixin, View):
+    template_name = 'attempt/attempt_mailing_list.html'
+
+    def get(self, request, mailing_id):
+        mailing = get_object_or_404(Mailing, id=mailing_id)
+        attempts = AttemptMailing.objects.filter(mailing=mailing)
+
+        context = {
+            'mailing': mailing,
+            'attempts': attempts,
+        }
+        return render(request, self.template_name, context)
+
+
+class AttemptMailingListView(LoginRequiredMixin, ListView):
     model = AttemptMailing
     template_name = 'attempt/attempt_list.html'
     context_object_name = 'attempts'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['mailing'] = self.mailing
+        return context
 
-class AttemptMailingDetailView(DetailView):
+
+class AttemptMailingDetailView(LoginRequiredMixin, DetailView):
     model = AttemptMailing
     template_name = 'attempt/attempt_detail.html'
     context_object_name = 'attempt'
     pk_url_kwarg = 'pk'
 
+
+class MailingStatisticsView(LoginRequiredMixin, View):
+    template_name = 'mailing/user_statistics.html'
+
+    def get_mailing_statistics(self, user):
+
+        mailings = Mailing.objects.filter(mailing_owner=user)
+        statistics = mailings.annotate(
+            successful_attempts=Count('attemptmailing', filter=Q(attemptmailing__status='Successful')),
+            unsuccessful_attempts=Count('attemptmailing', filter=Q(attemptmailing__status='Unsuccessful')),
+            total_messages=Count('recipient')
+        )
+        result = []
+        for mailing in statistics:
+            result.append({
+                'mailing_id': mailing.id,
+                'date_first_sending': mailing.date_first_sending,
+                'successful_attempts': mailing.successful_attempts,
+                'unsuccessful_attempts': mailing.unsuccessful_attempts,
+                'total_messages': mailing.total_messages,
+            })
+        return result
+
+    def get_user_mailing_summary(self, user):
+
+        attempts = AttemptMailing.objects.filter(mailing__mailing_owner=user)
+        summary = attempts.aggregate(
+            total_successful=Count('id', filter=Q(status='Successful')),
+            total_unsuccessful=Count('id', filter=Q(status='Unsuccessful')),
+            total_messages=Count('mailing__recipient', distinct=True)
+        )
+        return summary
+
+    def get(self, request):
+        user = request.user
+
+        mailing_stats = self.get_mailing_statistics(user)
+
+        user_summary = self.get_user_mailing_summary(user)
+
+        context = {
+            'mailing_stats': mailing_stats,
+            'user_summary': user_summary,
+        }
+
+        return render(request, self.template_name, context)

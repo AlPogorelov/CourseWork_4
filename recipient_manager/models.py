@@ -1,6 +1,7 @@
 from django.db import models
 
 from message_manager.models import Message
+from users.models import User
 
 
 class MailingRecipient(models.Model):
@@ -8,5 +9,4 @@ class MailingRecipient(models.Model):
     email = models.EmailField(unique=True, verbose_name='Email')
     fio = models.CharField(max_length=150, verbose_name='ФИО')
     comment = models.TextField(blank=True, null=True)
-
-
+    recipient_owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец карточки клиента', blank=True, null=True)

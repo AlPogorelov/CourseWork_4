@@ -129,8 +129,8 @@
         <div class="container">
           <div class="carousel-caption text-start">
             <h1>Общее количество рассылок</h1>
-            <p class="opacity-75">{{ total_mailing }}</p>
-            <p><a class="btn btn-lg btn-primary" href="{% url 'mailing:mailing_list' %}">Открыть список всех рассылок</a></p>
+            <p>{{ total_mailings }}</p>
+            <p><a class="btn btn-lg btn-primary" href="{% url 'mailing:mailing_list' %}">Рассылки</a></p>
           </div>
         </div>
       </div>
@@ -140,7 +140,6 @@
           <div class="carousel-caption">
             <h1>Количество активных рассылок</h1>
             <p>{{ active_mailings }}</p>
-
           </div>
         </div>
       </div>

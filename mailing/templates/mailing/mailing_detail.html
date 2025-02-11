@@ -17,9 +17,16 @@
             {% endfor %}
       </ul>
         </p>
+          {% if perms.mailing.send_mailing or user == recipient.owner %}
         <a class="btn btn-primary" href="{% url 'mailing:send' mailing.pk %}" role="button">Отправить рассылку</a>
+          {% endif %}
+          {% if perms.mailing.change_mailing or user == recipient.owner %}
         <a class="btn btn-primary" href="{% url 'mailing:mailing_update' mailing.pk %}" role="button">Изменить</a>
+          {% endif %}
+          {% if perms.mailing.delete_mailing or user == recipient.owner %}
         <a class="btn btn-primary" href="{% url 'mailing:mailing_delete' mailing.pk %}" role="button">Удалить</a>
+          {% endif %}
+        <a class="btn btn-primary" href="{% url 'mailing:attempt_mailing_detail' mailing.pk %}" role="button">Попытки</a>
       </div>
     </div>
 

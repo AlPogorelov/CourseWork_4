@@ -8,8 +8,9 @@ from django.shortcuts import redirect
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import logout, get_user_model
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, View, FormView
+from django.views.generic import CreateView, View, FormView, UpdateView
 from .forms import UserRegisterForm, PasswordResetForm, PasswordResetRequestForm
+
 
 from django.core.exceptions import ValidationError
 
@@ -107,3 +108,4 @@ class PasswordResetView(FormView):
             return super().form_valid(form)
         else:
             raise ValidationError('Недействительный токен восстановления пароля')
+
