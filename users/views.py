@@ -8,8 +8,10 @@ from django.shortcuts import redirect
 from django.contrib.auth.views import LoginView
 from django.contrib.auth import logout, get_user_model
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, View, FormView, UpdateView
-from .forms import UserRegisterForm, PasswordResetForm, PasswordResetRequestForm
+from django.views.generic import CreateView, View, FormView, UpdateView, ListView, DetailView
+from .forms import UserRegisterForm, PasswordResetForm, PasswordResetRequestForm, BlockingUser
+from django.core.exceptions import PermissionDenied
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 
 from django.core.exceptions import ValidationError
@@ -109,3 +111,42 @@ class PasswordResetView(FormView):
         else:
             raise ValidationError('Недействительный токен восстановления пароля')
 
+
+class UsersListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    model = User
+    template_name = 'users/users_list.html'
+    context_object_name = 'users'
+    permission_required = 'user.view_user'
+
+    def get_form_class(self):
+        user = self.request.user
+        if not user.has_perm('user.list_user'):
+            raise PermissionDenied
+
+
+class UsersDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    model = User
+    template_name = 'users/users_detail.html'
+    context_object_name = 'user'
+    pk_url_kwarg = 'pk'
+    permission_required = 'user.list_user'
+
+    def get_form_class(self):
+        user = self.request.user
+        if not user.has_perm('user.list_user'):
+            raise PermissionDenied
+
+
+class BlockingUsersView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    model = User
+    form_class = BlockingUser
+    template_name = 'users/user_block_form.html'
+    success_url = reverse_lazy('user:users_list')
+    permission_required = 'user.blocking_user'
+
+    def get_form_class(self):
+        user = self.request.user
+        if not user.has_perm('user.blocking_user'):
+            raise PermissionDenied
+        else:
+            return BlockingUser

@@ -30,3 +30,8 @@ class PasswordResetForm(forms.Form):
         if password and confirm_password and password != confirm_password:
             raise forms.ValidationError('Пароли не совпадают')
 
+
+class BlockingUser(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['is_active']

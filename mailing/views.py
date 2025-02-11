@@ -5,11 +5,13 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, CreateView, DeleteView, UpdateView, View
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.exceptions import PermissionDenied
-from .forms import MailingForm
+from .forms import MailingForm, BlockingMailing
 from .models import Mailing, AttemptMailing
 from django.http import HttpResponse
 from django.core.management import call_command
 from django.db.models import Count, Q
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 
 class MailingCreateView(LoginRequiredMixin, CreateView):
@@ -25,6 +27,7 @@ class MailingCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class MailingListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
     model = Mailing
     template_name = 'mailing/mailing_list.html'
@@ -49,6 +52,7 @@ class MailingDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView)
         if not user.has_perm('mailing.view_mailing') or not user == self.object.owner:
             raise PermissionDenied
 
+
 class MailingUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     model = Mailing
     form_class = MailingForm
@@ -59,6 +63,21 @@ class MailingUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
     def get_form_class(self):
         user = self.request.user
         if not user.has_perm('mailing.delete_mailing') or not user == self.object.owner:
+            raise PermissionDenied
+
+
+class BlockingMailingView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    model = Mailing
+    form_class = BlockingMailing
+    template_name = 'mailing/mailing_block_form.html'
+    success_url = reverse_lazy('mailing:mailing_list')
+    permission_required = 'mailing.block_mailing'
+
+    def get_form_class(self):
+        user = self.request.user
+        if user.has_perm('mailing.block_mailing'):
+            return BlockingMailing
+        else:
             raise PermissionDenied
 
 
@@ -108,10 +127,10 @@ class MailingSendView(LoginRequiredMixin, DetailView):
 
 
 class AttemptMailingView(LoginRequiredMixin, View):
-    template_name = 'attempt/attempt_mailing_list.html'
+    template_name = 'attempt/attempt_mg_list.html'
 
     def get(self, request, mailing_id):
-        mailing = get_object_or_404(Mailing, id=mailing_id)
+        mailing = get_object_or_404(Mailing, pk=mailing_id)
         attempts = AttemptMailing.objects.filter(mailing=mailing)
 
         context = {

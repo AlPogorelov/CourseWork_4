@@ -10,7 +10,7 @@
         <p class="lead">{{mailing.status }}</p>
         <p class="lead">{{mailing.message.subject }}</p>
           {% if perms.mailing.view_mailing or user == recipient.owner %}
-        <a class="btn btn-primary" href="{{ mailing.id }}" role="button">Подробнее</a>
+        <a class="btn btn-primary" href="{{ mailing.pk }}" role="button">Подробнее</a>
           {% endif %}
       </div>
     </div>

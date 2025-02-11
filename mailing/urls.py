@@ -1,6 +1,6 @@
 from mailing.apps import MailingConfig
 from .views import (MailingCreateView, MailingDeleteView, MailingDetailView, MailingUpdateView, MailingListView,
-                    MailingSendView, AttemptMailingListView, AttemptMailingDetailView, MailingStatisticsView, AttemptMailingView)
+                    MailingSendView, AttemptMailingDetailView, MailingStatisticsView, AttemptMailingView, BlockingMailingView)
 from django.urls import path, include
 
 
@@ -13,9 +13,9 @@ urlpatterns = [
     path('<int:pk>/update/', MailingUpdateView.as_view(), name='mailing_update'),
     path('<int:pk>/delete', MailingDeleteView.as_view(), name='mailing_delete'),
     path('<int:pk>/send/', MailingSendView.as_view(), name='send'),
-    path('<int:mailing_id>/attempts/', AttemptMailingView.as_view(), name='attempt_list'),
-    path('<int:mailing_id>/attempts/<int:pk>/', AttemptMailingDetailView.as_view(), name='attempt_mailing_detail'),
-    path('attempts/<int:pk>/', AttemptMailingDetailView.as_view(), name='attempt_detail'),
+    path('attempts/<int:mailing_id>', AttemptMailingView.as_view(), name='attempt_list'),
+    path('attempt/<int:pk>/', AttemptMailingDetailView.as_view(), name='attempt_detail'),
     path('statistics/', MailingStatisticsView.as_view(), name='user_statistics'),
+    path('<int:pk>/blocking/', BlockingMailingView.as_view(), name='blocking_mailing'),
 
 ]

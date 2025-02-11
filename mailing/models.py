@@ -16,6 +16,7 @@ class Mailing(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE, verbose_name='Сообщение')
     recipient = models.ManyToManyField(MailingRecipient)
     mailing_owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Владелец рассылки', blank=True, null=True)
+    is_active = models.BooleanField(verbose_name='Активность рассылки/Блокировка рассылки', default=True)
 
     def __str__(self):
         return f'Рассылка {self.id}'
@@ -23,6 +24,9 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = 'Рассылка'
         verbose_name_plural = 'Рассылки'
+        permissions = [
+            ('mailing.block_mailing', 'Блокировка рассылки'),
+        ]
 
 
 class AttemptMailing(models.Model):

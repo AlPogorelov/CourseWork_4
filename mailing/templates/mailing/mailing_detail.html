@@ -26,7 +26,10 @@
           {% if perms.mailing.delete_mailing or user == recipient.owner %}
         <a class="btn btn-primary" href="{% url 'mailing:mailing_delete' mailing.pk %}" role="button">Удалить</a>
           {% endif %}
-        <a class="btn btn-primary" href="{% url 'mailing:attempt_mailing_detail' mailing.pk %}" role="button">Попытки</a>
+        <a class="btn btn-primary" href="{% url 'mailing:attempt_list' mailing.pk %}" role="button">Попытки</a>
+         {% if perms.mailing.blocking_mailing %}
+        <a class="btn btn-primary" href="{% url 'mailing:blocking_mailing' mailing.pk %}" role="button">Заблокировать</a>
+          {% endif %}
       </div>
     </div>
 

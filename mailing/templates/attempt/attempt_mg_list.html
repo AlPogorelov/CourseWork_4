@@ -17,7 +17,7 @@
                 <td>{{ attempt.attempt_date }}</td>
                 <td>{{ attempt.status }}</td>
                 <td>
-                     <a class="btn btn-primary" href="{{ attempt.id }}" role="button">Подробнее</a>
+                     <a class="btn btn-primary" href="{% url 'mailing:attempt_detail' attempt.pk %}" role="button">Подробнее</a>
                 </td>
             </tr>
             {% endfor %}

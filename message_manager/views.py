@@ -3,6 +3,8 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import DetailView, ListView, TemplateView, CreateView,  DeleteView, UpdateView, View
 from .forms import MessageForm
 from .models import Message
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 
 
 class MessageCreateView(CreateView):
@@ -12,6 +14,7 @@ class MessageCreateView(CreateView):
     success_url = reverse_lazy('message_manager:messages_list')
 
 
+@method_decorator(cache_page(60 * 15), name='dispatch')
 class MessageListView(ListView):
     model = Message
     template_name = 'message_manager/messages_list.html'
