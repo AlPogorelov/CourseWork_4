@@ -25,7 +25,7 @@ class Mailing(models.Model):
         verbose_name = 'Рассылка'
         verbose_name_plural = 'Рассылки'
         permissions = [
-            ('mailing.block_mailing', 'Блокировка рассылки'),
+            ('block_mailing', 'Блокировка рассылки'),
         ]
 
 
