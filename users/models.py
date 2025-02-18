@@ -10,9 +10,6 @@ class User(AbstractUser):
     confirmation_token = models.CharField(max_length=255, null=True, blank=True)
     password_reset_token = models.CharField(max_length=255, null=True, blank=True)
 
-    groups = models.ManyToManyField('auth.Group', related_name='custom_user_set', blank=True)
-    user_permissions = models.ManyToManyField('auth.Permission', related_name='custom_user_permissions_set', blank=True)
-
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
