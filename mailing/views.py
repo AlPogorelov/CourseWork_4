@@ -62,7 +62,7 @@ class MailingUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
 
     def get_form_class(self):
         user = self.request.user
-        if not user.has_perm('mailing.delete_mailing') or not user == self.object.owner:
+        if not user.has_perm('mailing.change_mailing') or not user == self.object.owner:
             raise PermissionDenied
 
 

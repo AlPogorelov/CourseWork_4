@@ -8,11 +8,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         moder_group = Group.objects.create(name='moder')
         view_mailing = Permission.objects.get(codename='view_mailing')
+        view_messages = Permission.objects.get(codename='view_message')
         view_users = Permission.objects.get(codename='list_user')
         blocking_users = Permission.objects.get(codename='blocking_user')
         blocking_mailing = Permission.objects.get(codename='block_mailing')
 
-        moder_group.permissions.add(view_mailing, view_users, blocking_users, blocking_mailing)
+        moder_group.permissions.add(view_mailing, view_users, blocking_users, blocking_mailing, view_messages)
 
         user = User.objects.create(email='moder@test.ru')
         user.set_password('1111')

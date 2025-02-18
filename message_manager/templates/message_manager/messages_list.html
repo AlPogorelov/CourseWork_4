@@ -8,7 +8,9 @@
       <div class="col-md-7">
         <h2 class="featurette-heading fw-normal lh-1">{{ message.subject}}</h2>
         <p class="lead">{{message.body_text|truncatechars:50 }}</p>
+          {% if perms.message_manager.view_message or user == message.owner %}
         <a class="btn btn-primary" href="{{ message.id }}" role="button">Подробнее</a>
+          {% endif %}
       </div>
     </div>
 {% endfor %}
